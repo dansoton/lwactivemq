@@ -1,4 +1,0 @@
-lwactivemq
-==========
-
-LifeWay Activemq
