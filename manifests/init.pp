@@ -39,7 +39,7 @@ class lwactivemq (
   $activemquser = $lwactivemq::params::activemquser,
   $activemqrundirectory = $lwactivemq::params::activemqrundirectory,
   $activemqtarholder = $lwactivemq::params::activemqtarholder,
-  ) inherits activemq::params {
+  ) inherits lwactivemq::params {
 
   user { $activemquser:
     ensure    => present,
