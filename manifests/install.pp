@@ -1,4 +1,4 @@
-class activemq::install (
+class lwactivemq::install (
 
   $source = $activemq::params::source,
   $finaldest = $activemq::params::finaldest,

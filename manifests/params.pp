@@ -1,5 +1,5 @@
 # Private
-class activemq::params {
+class lwactivemq::params {
   $activemquser = 'activemq'
   $activemqrundirectory = '/usr/ActiveMQ'
   $activemqtarholder = '/opt/activemqinstall'

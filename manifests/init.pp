@@ -1,4 +1,4 @@
-# == Class: activemq
+# == Class: lwactivemq
 #
 # Full description of class activemq here.
 #
@@ -35,7 +35,7 @@
 #
 # Copyright 2015 John Cook, unless otherwise noted.
 #
-class activemq (
+class lwactivemq (
   $activemquser = $activemq::params::activemquser,
   $activemqrundirectory = $activemq::params::activemqrundirectory,
   $activemqtarholder = $activemq::params::activemqtarholder,
