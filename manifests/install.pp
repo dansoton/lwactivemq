@@ -1,9 +1,9 @@
 class lwactivemq::install (
 
-  $source = $activemq::params::source,
-  $finaldest = $activemq::params::finaldest,
-  $servicename = $activemq::params::servicename,
-  $version = $activemq::params::version,
+  $source = $lwactivemq::params::source,
+  $finaldest = $lwactivemq::params::finaldest,
+  $servicename = $lwactivemq::params::servicename,
+  $version = $lwactivemq::params::version,
 
   ) inherits activemq::params {
     exec { "/usr/bin/wget -N ${source}":

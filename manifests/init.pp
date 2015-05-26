@@ -36,9 +36,9 @@
 # Copyright 2015 John Cook, unless otherwise noted.
 #
 class lwactivemq (
-  $activemquser = $activemq::params::activemquser,
-  $activemqrundirectory = $activemq::params::activemqrundirectory,
-  $activemqtarholder = $activemq::params::activemqtarholder,
+  $activemquser = $lwactivemq::params::activemquser,
+  $activemqrundirectory = $lwactivemq::params::activemqrundirectory,
+  $activemqtarholder = $lwactivemq::params::activemqtarholder,
   ) inherits activemq::params {
 
   user { $activemquser:
