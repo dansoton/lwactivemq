@@ -8,7 +8,11 @@ class lwactivemq::install (
   $mysqljdbcdest = $lwactivemq::params::mysqljdbcdest,
   $activemquser = $lwactivemq::params::activemquser,
   $mq_db_username = $lwactivemq::params::mq_db_username,
-  $mq_clustertype= $lwactivemq::params::mq_clustertype,
+  $mq_db_password = $lwactivemq::params::mq_db_password,
+  $mq_cluster_type = $lwactivemq::params::mq_cluster_type,
+  $mq_cluster_conn = $lwactivemq::params::mq_cluster_conn,
+  $dbname = $lwactivemq::params::dbname,
+  $fullservername = $lwactivemq::params::fullservername,
 
   ) inherits lwactivemq::params {
     exec { "/usr/bin/wget -N ${source}":
