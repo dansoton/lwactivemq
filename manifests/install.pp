@@ -5,7 +5,7 @@ class lwactivemq::install (
   $servicename = $lwactivemq::params::servicename,
   $version = $lwactivemq::params::version,
 
-  ) inherits activemq::params {
+  ) inherits lwactivemq::params {
     exec { "/usr/bin/wget -N ${source}":
       cwd =>  $destination,
     } ->
