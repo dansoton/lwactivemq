@@ -49,6 +49,9 @@ class lwactivemq (
 
   file { $activemqrundirectory:
     ensure    => "directory",
+    owner     => $activemquser,
+    recurse   => true,
+
   }
 
   file{ $activemqtarholder:

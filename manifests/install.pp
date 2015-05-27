@@ -4,6 +4,11 @@ class lwactivemq::install (
   $finaldest = $lwactivemq::params::finaldest,
   $servicename = $lwactivemq::params::servicename,
   $version = $lwactivemq::params::version,
+  $mysqljdbcsource = $lwactivemq::params::mysqljdbcsource,
+  $mysqljdbcdest = $lwactivemq::params::mysqljdbcdest,
+  $activemquser = $lwactivemq::params::activemquser,
+  $mq_db_username = $lwactivemq::params::mq_db_username,
+  $mq_clustertype= $lwactivemq::params::mq_clustertype,
 
   ) inherits lwactivemq::params {
     exec { "/usr/bin/wget -N ${source}":
@@ -38,5 +43,28 @@ class lwactivemq::install (
       hasstatus => true,
       hasrestart  => true,
     }
+
+    file {"/usr/ActiveMQ/conf/activemq.xml":
+      ensure  => 'file',
+      content => template('lwactivemq/activemq.xml.erb'),
+      owner   => $activemquser,
+      notify => Service[$servicename],
+  }
+
+  case $mq_cluster_conn {
+    'mysql': {
+
+      exec{ "getjdbcdriver":
+        command => "/usr/bin/wget -q ${mysqljdbcsource} -O ${mysqljdbcdest}/mysql-connector-java-5.1.25.jar}",
+      }
+
+      file { '/usr/ActiveMQ/lib/optional/mysql-connector-java-5.1.25.jar':
+        ensure  => file,
+        owner   => $activemquser,
+        notify => Service[$servicename],
+      }
+    }
+    }
+
 
   }

@@ -1,193 +1,153 @@
 <!--
-Licensed to the Apache Software Foundation (ASF) under one or more
-contributor license agreements.  See the NOTICE file distributed with
-this work for additional information regarding copyright ownership.
-The ASF licenses this file to You under the Apache License, Version 2.0
-(the "License"); you may not use this file except in compliance with
-the License.  You may obtain a copy of the License at
+    Licensed to the Apache Software Foundation (ASF) under one or more
+    contributor license agreements.  See the NOTICE file distributed with
+    this work for additional information regarding copyright ownership.
+    The ASF licenses this file to You under the Apache License, Version 2.0
+    (the "License"); you may not use this file except in compliance with
+    the License.  You may obtain a copy of the License at
 
-http://www.apache.org/licenses/LICENSE-2.0
+    http://www.apache.org/licenses/LICENSE-2.0
 
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
 -->
 <!-- START SNIPPET: example -->
-$mq_cluster_type = 'activepassive' #activepassive or nocluster
-$mq_cluster_conn = 'mysql' # mysql and there will be others as this matures
-
 <beans
-xmlns="http://www.springframework.org/schema/beans"
-xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
-http://activemq.apache.org/schema/core http://activemq.apache.org/schema/core/activemq-core.xsd">
+  xmlns="http://www.springframework.org/schema/beans"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+  http://activemq.apache.org/schema/core http://activemq.apache.org/schema/core/activemq-core.xsd">
 
-<!-- Allows us to use system properties as variables in this configuration file -->
-<bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
-  <property name="locations">
-    <value>file:${activemq.conf}/credentials.properties</value>
-  </property>
-</bean>
+    <!-- Allows us to use system properties as variables in this configuration file -->
+    <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+        <property name="locations">
+            <value>file:${activemq.conf}/credentials.properties</value>
+        </property>
+    </bean>
 
-<!-- Allows accessing the server log -->
-<bean id="logQuery" class="org.fusesource.insight.log.log4j.Log4jLogQuery"
-lazy-init="false" scope="singleton"
-init-method="start" destroy-method="stop">
-</bean>
+   <!-- Allows accessing the server log -->
+    <bean id="logQuery" class="org.fusesource.insight.log.log4j.Log4jLogQuery"
+          lazy-init="false" scope="singleton"
+          init-method="start" destroy-method="stop">
+    </bean>
 
-<!--
-The <broker> element is used to configure the ActiveMQ broker.
--->
-<broker xmlns="http://activemq.apache.org/schema/core" brokerName="localhost" dataDirectory="${activemq.data}">
+    <!--
+        The <broker> element is used to configure the ActiveMQ broker.
+    -->
+    <broker xmlns="http://activemq.apache.org/schema/core" brokerName="localhost" dataDirectory="${activemq.data}">
 
-  <destinationPolicy>
-    <policyMap>
-      <policyEntries>
-        <policyEntry topic=">" >
-          <!-- The constantPendingMessageLimitStrategy is used to prevent
-          slow topic consumers to block producers and affect other consumers
-          by limiting the number of messages that are retained
-          For more information, see:
+        <destinationPolicy>
+            <policyMap>
+              <policyEntries>
+                <policyEntry topic=">" >
+                    <!-- The constantPendingMessageLimitStrategy is used to prevent
+                         slow topic consumers to block producers and affect other consumers
+                         by limiting the number of messages that are retained
+                         For more information, see:
 
-          http://activemq.apache.org/slow-consumer-handling.html
+                         http://activemq.apache.org/slow-consumer-handling.html
 
+                    -->
+                  <pendingMessageLimitStrategy>
+                    <constantPendingMessageLimitStrategy limit="1000"/>
+                  </pendingMessageLimitStrategy>
+                </policyEntry>
+              </policyEntries>
+            </policyMap>
+        </destinationPolicy>
+
+
+        <!--
+            The managementContext is used to configure how ActiveMQ is exposed in
+            JMX. By default, ActiveMQ uses the MBean server that is started by
+            the JVM. For more information, see:
+
+            http://activemq.apache.org/jmx.html
         -->
-        <pendingMessageLimitStrategy>
-          <constantPendingMessageLimitStrategy limit="1000"/>
-        </pendingMessageLimitStrategy>
-      </policyEntry>
-    </policyEntries>
-  </policyMap>
-</destinationPolicy>
+        <managementContext>
+            <managementContext createConnector="false"/>
+        </managementContext>
 
+        <!--
+            Configure message persistence for the broker. The default persistence
+            mechanism is the KahaDB store (identified by the kahaDB tag).
+            For more information, see:
 
-<!--
-The managementContext is used to configure how ActiveMQ is exposed in
-JMX. By default, ActiveMQ uses the MBean server that is started by
-the JVM. For more information, see:
+            http://activemq.apache.org/persistence.html
+        -->
+        <% if @mq_cluster_type == "activepassive" -%>
+        <persistenceAdapter>
+             <jdbcPersistenceAdapter dataDirectory="activemq-data" dataSource="#mysql-ds"/>
+        </persistenceAdapter>
+        <%- end -%>
 
-http://activemq.apache.org/jmx.html
--->
-<managementContext>
-  <managementContext createConnector="false"/>
-</managementContext>
+        <% if @mq_cluster_type == "nocluster" -%>
+        <persistenceAdapter>
+             <kahaDB directory="${activemq.data}/kahadb"/>
+        </persistenceAdapter>
+        <%- end -%>
 
-<!--
-Configure message persistence for the broker. The default persistence
-mechanism is the KahaDB store (identified by the kahaDB tag).
-For more information, see:
+          <!--
+            The systemUsage controls the maximum amount of space the broker will
+            use before disabling caching and/or slowing down producers. For more information, see:
+            http://activemq.apache.org/producer-flow-control.html
+          -->
+          <systemUsage>
+            <systemUsage>
+                <memoryUsage>
+                    <memoryUsage percentOfJvmHeap="70" />
+                </memoryUsage>
+                <storeUsage>
+                    <storeUsage limit="100 gb"/>
+                </storeUsage>
+                <tempUsage>
+                    <tempUsage limit="50 gb"/>
+                </tempUsage>
+            </systemUsage>
+        </systemUsage>
 
-http://activemq.apache.org/persistence.html
--->
+        <!--
+            The transport connectors expose ActiveMQ over a given protocol to
+            clients and other brokers. For more information, see:
 
-<% if @mq_cluster_type == "activepassive" -%>
-<persistenceAdapter>
-  <kahaDB directory="${activemq.data}/kahadb"/>
-</persistenceAdapter>
-<%- end -%>
+            http://activemq.apache.org/configuring-transports.html
+        -->
+        <transportConnectors>
+            <!-- DOS protection, limit concurrent connections to 1000 and frame size to 100MB -->
+            <transportConnector name="openwire" uri="tcp://0.0.0.0:61616?maximumConnections=1000&amp;wireFormat.maxFrameSize=104857600"/>
+            <transportConnector name="amqp" uri="amqp://0.0.0.0:5672?maximumConnections=1000&amp;wireFormat.maxFrameSize=104857600"/>
+            <transportConnector name="stomp" uri="stomp://0.0.0.0:61613?maximumConnections=1000&amp;wireFormat.maxFrameSize=104857600"/>
+            <transportConnector name="mqtt" uri="mqtt://0.0.0.0:1883?maximumConnections=1000&amp;wireFormat.maxFrameSize=104857600"/>
+            <transportConnector name="ws" uri="ws://0.0.0.0:61614?maximumConnections=1000&amp;wireFormat.maxFrameSize=104857600"/>
+        </transportConnectors>
 
-<% if @mq_cluster_type == "none" -%>
-<persistenceAdapter>
-  <kahaDB directory="${activemq.data}/kahadb"/>
-</persistenceAdapter>
-<%- end -%>
+        <!-- destroy the spring context on shutdown to stop jetty -->
+        <shutdownHooks>
+            <bean xmlns="http://www.springframework.org/schema/beans" class="org.apache.activemq.hooks.SpringContextHook" />
+        </shutdownHooks>
 
-<!--
-The systemUsage controls the maximum amount of space the broker will
-use before disabling caching and/or slowing down producers. For more information, see:
-http://activemq.apache.org/producer-flow-control.html
--->
-<systemUsage>
-  <systemUsage>
-    <memoryUsage>
-      <memoryUsage percentOfJvmHeap="70" />
-    </memoryUsage>
-    <storeUsage>
-      <storeUsage limit="100 gb"/>
-    </storeUsage>
-    <tempUsage>
-      <tempUsage limit="50 gb"/>
-    </tempUsage>
-  </systemUsage>
-</systemUsage>
+    </broker>
 
-<!--
-The transport connectors expose ActiveMQ over a given protocol to
-clients and other brokers. For more information, see:
+  <% if @mq_cluster_conn == 'mysql' -%>
+  <bean id="mysql-ds" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
+    <property name="driverClassName" value="com.mysql.jdbc.Driver"/>
+    <property name="url" value="jdbc:mysql://<%= @fullservername %>/<%= @dbname %>?relaxAutoCommit=true"/>
+    <property name="username" value="<%= @mq_db_username %>"/>
+    <property name="password" value="<%= @mq_db_password %>"/>
+    <property name="poolPreparedStatements" value="true"/>
+  </bean>
+  <%- end -%>
 
-http://activemq.apache.org/configuring-transports.html
--->
-<transportConnectors>
-  <!-- DOS protection, limit concurrent connections to 1000 and frame size to 100MB -->
-  <transportConnector name="openwire" uri="tcp://0.0.0.0:61616?maximumConnections=1000&amp;wireFormat.maxFrameSize=104857600"/>
-  <transportConnector name="amqp" uri="amqp://0.0.0.0:5672?maximumConnections=1000&amp;wireFormat.maxFrameSize=104857600"/>
-  <transportConnector name="stomp" uri="stomp://0.0.0.0:61613?maximumConnections=1000&amp;wireFormat.maxFrameSize=104857600"/>
-  <transportConnector name="mqtt" uri="mqtt://0.0.0.0:1883?maximumConnections=1000&amp;wireFormat.maxFrameSize=104857600"/>
-  <transportConnector name="ws" uri="ws://0.0.0.0:61614?maximumConnections=1000&amp;wireFormat.maxFrameSize=104857600"/>
-</transportConnectors>
+    <!--
+        Enable web consoles, REST and Ajax APIs and demos
+        The web consoles requires by default login, you can disable this in the jetty.xml file
 
-<!--  This xbean configuration file supports all the standard spring xml configuration options -->
-
-<!-- Postgres DataSource Sample Setup -->
-<!--
-<bean id="postgres-ds" class="org.postgresql.ds.PGPoolingDataSource">
-<property name="serverName" value="localhost"/>
-<property name="databaseName" value="activemq"/>
-<property name="portNumber" value="0"/>
-<property name="user" value="activemq"/>
-<property name="password" value="activemq"/>
-<property name="dataSourceName" value="postgres"/>
-<property name="initialConnections" value="1"/>
-<property name="maxConnections" value="10"/>
-</bean>
--->
-
-<!-- MySql DataSource Sample Setup -->
-<!--
-<bean id="mysql-ds" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
-<property name="driverClassName" value="com.mysql.jdbc.Driver"/>
-<property name="url" value="jdbc:mysql://localhost/activemq?relaxAutoCommit=true"/>
-<property name="username" value="activemq"/>
-<property name="password" value="activemq"/>
-<property name="poolPreparedStatements" value="true"/>
-</bean>
--->
-
-<!-- Oracle DataSource Sample Setup -->
-<!--
-<bean id="oracle-ds" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
-<property name="driverClassName" value="oracle.jdbc.driver.OracleDriver"/>
-<property name="url" value="jdbc:oracle:thin:@localhost:1521:AMQDB"/>
-<property name="username" value="scott"/>
-<property name="password" value="tiger"/>
-<property name="poolPreparedStatements" value="true"/>
-</bean>
--->
-
-<!-- Embedded Derby DataSource Sample Setup -->
-<!--
-<bean id="derby-ds" class="org.apache.derby.jdbc.EmbeddedDataSource">
-<property name="databaseName" value="derbydb"/>
-<property name="createDatabase" value="create"/>
-</bean>
--->
-
-<!-- destroy the spring context on shutdown to stop jetty -->
-<shutdownHooks>
-  <bean xmlns="http://www.springframework.org/schema/beans" class="org.apache.activemq.hooks.SpringContextHook" />
-</shutdownHooks>
-
-</broker>
-
-<!--
-Enable web consoles, REST and Ajax APIs and demos
-The web consoles requires by default login, you can disable this in the jetty.xml file
-
-Take a look at ${ACTIVEMQ_HOME}/conf/jetty.xml for more details
--->
-<import resource="jetty.xml"/>
+        Take a look at ${ACTIVEMQ_HOME}/conf/jetty.xml for more details
+    -->
+    <import resource="jetty.xml"/>
 
 </beans>
 <!-- END SNIPPET: example -->
