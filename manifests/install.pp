@@ -59,7 +59,7 @@ class lwactivemq::install (
     'mysql': {
 
       exec{ "getjdbcdriver":
-        command => "/usr/bin/wget -q ${mysqljdbcsource} -O ${mysqljdbcdest}/mysql-connector-java-5.1.25.jar}",
+        command => "/usr/bin/wget -q ${mysqljdbcsource} -O ${mysqljdbcdest}/mysql-connector-java-5.1.25.jar",
       }
 
       file { '/usr/ActiveMQ/lib/optional/mysql-connector-java-5.1.25.jar':
