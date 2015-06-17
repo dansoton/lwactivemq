@@ -16,4 +16,5 @@ class lwactivemq::params {
   $dbname = 'default'
   $mysqljdbcsource = 'https://s3.amazonaws.com/lifeway-binaries/temp/tomcatjars/mysql-connector-java-5.1.25.jar'
   $mysqljdbcdest = '/usr/ActiveMQ/lib/optional'
+  $mq_security = false
 }

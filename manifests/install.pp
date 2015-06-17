@@ -13,6 +13,7 @@ class lwactivemq::install (
   $mq_cluster_conn = $lwactivemq::params::mq_cluster_conn,
   $dbname = $lwactivemq::params::dbname,
   $fullservername = $lwactivemq::params::fullservername,
+  $mq_security = $lwactivemq::params::mq_security,
 
   ) inherits lwactivemq::params {
     exec { "/usr/bin/wget -N ${source}":
