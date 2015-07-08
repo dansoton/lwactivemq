@@ -26,7 +26,7 @@ class lwactivemq::install (
       creates => "${destination}/apache-activemq-${version}"
     } ->
 
-    exec { "cp -R ${destination}/apache-activemq-${version} ${finaldest}":
+    exec { "cp -R ${destination}/apache-activemq-${version}/. ${finaldest}":
       path =>  "/bin",
       cwd => "/usr",
       creates => "${finaldest}/README.txt"
