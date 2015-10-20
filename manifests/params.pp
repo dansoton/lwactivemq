@@ -10,11 +10,11 @@ class lwactivemq::params {
   $version = '5.10.0'
   $mq_cluster_type = 'activepassive' #activepassive or nocluster
   $mq_cluster_conn = 'mysql' # mysql and there will be others as this matures
-  $mq_db_username = 'activemq'
-  $mq_db_password = 'activemq'
+  $mq_db_username = 'activemq' # this is a space holder.  Change to your db username.
+  $mq_db_password = 'activemq' # this is a space holder.  Change to your db pw.
   $fullservername = 'defaultservername'
   $dbname = 'default'
-  $mysqljdbcsource = 'https://s3.amazonaws.com/lifeway-binaries/temp/tomcatjars/mysql-connector-java-5.1.25.jar'
+  $mysqljdbcsource = 'http://connector.jar' # this is a jar file.  untar from location http://dev.mysql.com/downloads/connector/j/ and link to jar destination
   $mysqljdbcdest = '/usr/ActiveMQ/lib/optional'
   $mq_security = false
 }
