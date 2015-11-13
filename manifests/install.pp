@@ -42,19 +42,13 @@ class lwactivemq::install (
       creates => "/etc/default/activemq"
     } ->
 
-    service { $servicename:
-      ensure => 'running',
-      enable  => true,
-      hasstatus => true,
-      hasrestart  => true,
-    }
 
     file {"/usr/ActiveMQ/conf/activemq.xml":
       ensure  => 'file',
       content => template('lwactivemq/activemq.xml.erb'),
       owner   => $activemquser,
       notify => Service[$servicename],
-  }
+  } ->
 
   case $mq_cluster_conn {
     'mysql': {
@@ -69,6 +63,13 @@ class lwactivemq::install (
         notify => Service[$servicename],
       }
     }
+  } ->
+
+    service { $servicename:
+      ensure => 'running',
+      enable  => true,
+      hasstatus => true,
+      hasrestart  => true,
     }
 
 
