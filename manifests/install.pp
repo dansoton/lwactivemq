@@ -67,6 +67,13 @@ class lwactivemq::install (
     }
   } ->
 
+  file { $activemqrundirectory:
+    ensure    => "directory",
+    owner     => $activemquser,
+    recurse   => true,
+  }
+
+
     service { $servicename:
       ensure => 'running',
       enable  => true,
