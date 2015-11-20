@@ -44,17 +44,6 @@ class lwactivemq::install (
       notify => Service[$servicename]
     } ->
 
-    file { '/etc/init.d/activemq':
-      ensure  => file,
-      owner   => $activemquser,
-      notify => Service[$servicename],
-     } ->
-
-    file { '/etc/default/activemq':
-      ensure  => file,
-      owner   => $activemquser,
-      notify => Service[$servicename],
-    } ->
 
     file {"/usr/ActiveMQ/conf/activemq.xml":
       ensure  => 'file',
