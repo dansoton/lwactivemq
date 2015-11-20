@@ -34,12 +34,14 @@ class lwactivemq::install (
 
     exec {"ln -sf /usr/ActiveMQ/bin/activemq /etc/init.d/":
       path  => "/bin",
-      creates => "/etc/init.d/activemq"
+      creates => "/etc/init.d/activemq",
+      otify => Service[$servicename]
     } ->
 
     exec {"/etc/init.d/activemq setup /etc/default/activemq":
       path  => "/bin",
-      creates => "/etc/default/activemq"
+      creates => "/etc/default/activemq",
+      notify => Service[$servicename]
     } ->
 
 
