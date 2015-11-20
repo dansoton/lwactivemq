@@ -47,6 +47,12 @@ class lwactivemq (
     home      => "/home/${user}",
   }
 
+  file { $activemqrundirectory:
+    ensure    => "directory",
+    owner     => $activemquser,
+    recurse   => true,
+  }
+
   file{ $activemqtarholder:
     ensure    => "directory",
   }
