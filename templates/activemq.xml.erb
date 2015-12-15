@@ -149,7 +149,7 @@
   <% if @mq_cluster_conn == 'mysql' -%>
   <bean id="mysql-ds" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
     <property name="driverClassName" value="com.mysql.jdbc.Driver"/>
-    <property name="url" value="jdbc:mysql://<%= @fullservername %>/<%= @dbname %>?relaxAutoCommit=true"/>
+    <property name="url" value="jdbc:mysql://<%= @fullservername %>/<%= @dbname %>?relaxAutoCommit=true&amp;autoReconnect=true"/>
     <property name="username" value="<%= @mq_db_username %>"/>
     <property name="password" value="<%= @mq_db_password %>"/>
     <property name="poolPreparedStatements" value="true"/>
