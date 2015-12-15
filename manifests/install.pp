@@ -1,5 +1,7 @@
 class lwactivemq::install (
 
+  $bonecpsource = $lwactivemq::params::bonecpsource,
+  $bonecpdest = $lwactivemq::params::bonecpdest,
   $source = $lwactivemq::params::source,
   $finaldest = $lwactivemq::params::finaldest,
   $servicename = $lwactivemq::params::servicename,
@@ -11,8 +13,7 @@ class lwactivemq::install (
   $mq_db_password = $lwactivemq::params::mq_db_password,
   $mq_cluster_type = $lwactivemq::params::mq_cluster_type,
   $mq_cluster_conn = $lwactivemq::params::mq_cluster_conn,
-  $dbname = $lwactivemq::params::dbname,
-  $fullservername = $lwactivemq::params::fullservername,
+  $mq_db_url_string = $lwactivemq::params::mq_db_url_string,
   $mq_security = $lwactivemq::params::mq_security,
 
   ) inherits lwactivemq::params {
@@ -59,7 +60,17 @@ class lwactivemq::install (
         command => "/usr/bin/wget -q ${mysqljdbcsource} -O ${mysqljdbcdest}/mysql-connector-java-5.1.25.jar",
       }
 
+      exec{ "getbonecpdriver":
+        command => "/usr/bin/wget -q ${bonecpsource} -O ${bonecpdest}/bonecp-0.7.1.RELEASE.jar",
+      }
+
       file { '/usr/ActiveMQ/lib/optional/mysql-connector-java-5.1.25.jar':
+        ensure  => file,
+        owner   => $activemquser,
+        notify => Service[$servicename],
+      }
+
+      file { '/usr/ActiveMQ/lib/optional/bonecp-0.7.1.RELEASE.jar':
         ensure  => file,
         owner   => $activemquser,
         notify => Service[$servicename],

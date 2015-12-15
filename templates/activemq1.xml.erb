@@ -147,24 +147,13 @@
     </broker>
 
   <% if @mq_cluster_conn == 'mysql' -%>
-  <bean id="mysql-ds" class="com.jolbox.bonecp.BoneCPDataSource" destroy-method="close">
-    <property name="driverClass" value="com.mysql.jdbc.Driver"/>
-    <property name="jdbcUrl" value="<%= @mq_db_url_string %>"/>
+  <bean id="mysql-ds" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
+    <property name="driverClassName" value="com.mysql.jdbc.Driver"/>
+    <property name="url" value="jdbc:mysql://<%= @fullservername %>/<%= @dbname %>?relaxAutoCommit=true&amp;autoReconnect=true"/>
     <property name="username" value="<%= @mq_db_username %>"/>
     <property name="password" value="<%= @mq_db_password %>"/>
-    <property name="connectionTimeoutInMs" value="3000" />
-    <property name="idleConnectionTestPeriodInMinutes" value="1"/>
-    <property name="idleMaxAgeInMinutes" value="3"/>
-    <property name="maxConnectionsPerPartition" value="20"/>
-    <property name="minConnectionsPerPartition" value="5"/>
-    <property name="partitionCount" value="3"/>
-    <property name="acquireIncrement" value="5"/>
-    <property name="statementsCacheSize" value="100"/>
-    <property name="releaseHelperThreads" value="4"/>
-    <property name="connectionTestStatement" value="/* ping */ SELECT 1"/>
-    <property name="poolName" value="JDBC Pool"/>
-</bean>
-
+    <property name="poolPreparedStatements" value="true"/>
+  </bean>
   <%- end -%>
 
     <!--
