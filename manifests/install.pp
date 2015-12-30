@@ -91,15 +91,6 @@ class lwactivemq::install (
     }
   } ->
 
-  if $usejmx {
-    file_line { 'jmxsetup':
-    path  => '/etc/default/activemq',
-    line  => "ACTIVEMQ_SUNJMX_START=\"-Dcom.sun.management.jmxremote.port=1616 -Dcom.sun.management.jmxremote.access.file=${ACTIVEMQ_CONF}/jmx.access -Dcom.sun.management.jmxremote.ssl=false -Dcom.sun.management.jmxremote\"",
-    match => '^ACTIVEMQ_SUNJMX_START.*',
-    }
-
-  }
-
     service { $servicename:
       ensure => 'running',
       enable  => true,
@@ -107,5 +98,13 @@ class lwactivemq::install (
       hasrestart  => true,
     }
 
+
+  if $usejmx {
+    file_line { 'jmxsetup':
+    path  => '/etc/default/activemq',
+    line  => "ACTIVEMQ_SUNJMX_START=\"-Dcom.sun.management.jmxremote.port=1616 -Dcom.sun.management.jmxremote.access.file=${ACTIVEMQ_CONF}/jmx.access -Dcom.sun.management.jmxremote.ssl=false -Dcom.sun.management.jmxremote\"",
+    match => '^ACTIVEMQ_SUNJMX_START.*',
+    }
+  }
 
   }
