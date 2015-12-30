@@ -37,7 +37,12 @@
     <!--
         The <broker> element is used to configure the ActiveMQ broker.
     -->
+    <% if @usejmx == true -%>
+    <broker xmlns="http://activemq.apache.org/schema/core" brokerName="localhost" useJmx="true" dataDirectory="${activemq.data}">
+    <%- end -%>
+    <% if @usejmx == false -%>
     <broker xmlns="http://activemq.apache.org/schema/core" brokerName="localhost" dataDirectory="${activemq.data}">
+    <%- end -%>
 
         <% if @mq_security == true -%>
         <plugins>

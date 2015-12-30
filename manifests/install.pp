@@ -5,7 +5,6 @@ class lwactivemq::install (
   $source = $lwactivemq::params::source,
   $finaldest = $lwactivemq::params::finaldest,
   $servicename = $lwactivemq::params::servicename,
-  $version = $lwactivemq::params::version,
   $mysqljdbcsource = $lwactivemq::params::mysqljdbcsource,
   $mysqljdbcdest = $lwactivemq::params::mysqljdbcdest,
   $activemquser = $lwactivemq::params::activemquser,
@@ -17,17 +16,32 @@ class lwactivemq::install (
   $mq_security = $lwactivemq::params::mq_security,
 
   ) inherits lwactivemq::params {
+
+    $amq_array = split($source, '/')
+    $amq_file = $amq_array[-1]
+
+'http://archive.apache.org/dist/activemq/5.10.0/apache-activemq-5.10.0-bin.tar.gz'
+
+    $amqversion_array = split($source, '-')
+    $amq_version = $amqversion_array[-2]
+
+    $mysqljdbc_array = split($mysqljdbcsource, '/')
+    $mysqljdbc_file = $mysqljdbc_array[-1]
+
+    $bonecp_array = split($bonecpsource, '/')
+    $bonecp_file = $bonecp_array[-1]
+
     exec { "/usr/bin/wget -N ${source}":
       cwd =>  $destination,
     } ->
 
-    exec { "tar -xvzf $destination/apache-activemq-${version}-bin.tar.gz":
+    exec { "tar -xvzf $destination/$amq_file":
       path =>  "/bin",
       cwd =>  $destination,
-      creates => "${destination}/apache-activemq-${version}"
+      creates => "${destination}/apache-activemq-${amq_version}"
     } ->
 
-    exec { "cp -R ${destination}/apache-activemq-${version}/. ${finaldest}":
+    exec { "cp -R ${destination}/apache-activemq-${amq_version}/. ${finaldest}":
       path =>  "/bin",
       cwd => "/usr",
       creates => "${finaldest}/README.txt"
@@ -57,20 +71,20 @@ class lwactivemq::install (
     'mysql': {
 
       exec{ "getjdbcdriver":
-        command => "/usr/bin/wget -q ${mysqljdbcsource} -O ${mysqljdbcdest}/mysql-connector-java-5.1.25.jar",
+        command => "/usr/bin/wget -q ${mysqljdbcsource} -O ${mysqljdbcdest}/${mysqljdbc_file}",
       }
 
       exec{ "getbonecpdriver":
-        command => "/usr/bin/wget -q ${bonecpsource} -O ${bonecpdest}/bonecp-0.7.1.RELEASE.jar",
+        command => "/usr/bin/wget -q ${bonecpsource} -O ${bonecpdest}/${bonecp_file}",
       }
 
-      file { '/usr/ActiveMQ/lib/optional/mysql-connector-java-5.1.25.jar':
+      file { "${mysqljdbcdest}/${mysqljdbc_file}":
         ensure  => file,
         owner   => $activemquser,
         notify => Service[$servicename],
       }
 
-      file { '/usr/ActiveMQ/lib/optional/bonecp-0.7.1.RELEASE.jar':
+      file { "${bonecpdest}/${bonecp_file}":
         ensure  => file,
         owner   => $activemquser,
         notify => Service[$servicename],

@@ -7,7 +7,6 @@ class lwactivemq::params {
   $destination = '/opt/activemqinstall'
   $finaldest = '/usr/ActiveMQ'
   $servicename = 'activemq'
-  $version = '5.10.0'
   $mq_cluster_type = 'activepassive' #activepassive or nocluster
   $mq_cluster_conn = 'mysql' # mysql and there will be others as this matures
   $mq_db_username = 'activemq' # this is a space holder.  Change to your db username.
@@ -16,4 +15,5 @@ class lwactivemq::params {
   $mysqljdbcdest = '/usr/ActiveMQ/lib/optional'
   $bonecpdest = '/usr/ActiveMQ/lib/optional'
   $mq_security = false
+  $usejmx = false
 }
