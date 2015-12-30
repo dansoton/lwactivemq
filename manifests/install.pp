@@ -20,8 +20,6 @@ class lwactivemq::install (
     $amq_array = split($source, '/')
     $amq_file = $amq_array[-1]
 
-'http://archive.apache.org/dist/activemq/5.10.0/apache-activemq-5.10.0-bin.tar.gz'
-
     $amqversion_array = split($source, '-')
     $amq_version = $amqversion_array[-2]
 
