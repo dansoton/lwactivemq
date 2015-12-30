@@ -14,6 +14,7 @@ class lwactivemq::install (
   $mq_cluster_conn = $lwactivemq::params::mq_cluster_conn,
   $mq_db_url_string = $lwactivemq::params::mq_db_url_string,
   $mq_security = $lwactivemq::params::mq_security,
+  $usejmx = $lwactivemq::params::usejmx,
 
   ) inherits lwactivemq::params {
 
