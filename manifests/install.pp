@@ -90,7 +90,7 @@ class lwactivemq::install (
         owner  => $activemquser,
         notify => Service[$servicename],
       }
-  } ->
+  }
 
     service { $servicename:
       ensure     => 'running',
