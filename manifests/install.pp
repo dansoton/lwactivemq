@@ -101,25 +101,29 @@ class lwactivemq::install (
 
   if $usejmx {
     file_line { 'runactivemqas':
-    path  => '/etc/default/activemq',
-    line  => "ACTIVEMQ_USER=\"activemq\"",
-    match => '^ACTIVEMQ_USER.*',
+      path  => '/etc/default/activemq',
+      line  => "ACTIVEMQ_USER=\"activemq\"",
+      match => '^ACTIVEMQ_USER.*',
+      notify => Service[$servicename],
     }
 
     file_line { 'jmxsetup':
-    path  => '/etc/default/activemq',
-    line  => "ACTIVEMQ_SUNJMX_START=\"-Dcom.sun.management.jmxremote.port=1616 -Dcom.sun.management.jmxremote.password.file=\${ACTIVEMQ_CONF}/jmx.password -Dcom.sun.management.jmxremote.access.file=\${ACTIVEMQ_CONF}/jmx.access -Dcom.sun.management.jmxremote.ssl=false -Dcom.sun.management.jmxremote\"",
-    match => '^ACTIVEMQ_SUNJMX_START.*',
+      path  => '/etc/default/activemq',
+      line  => "ACTIVEMQ_SUNJMX_START=\"-Dcom.sun.management.jmxremote.port=1616 -Dcom.sun.management.jmxremote.password.file=\${ACTIVEMQ_CONF}/jmx.password -Dcom.sun.management.jmxremote.access.file=\${ACTIVEMQ_CONF}/jmx.access -Dcom.sun.management.jmxremote.ssl=false -Dcom.sun.management.jmxremote\"",
+      match => '^ACTIVEMQ_SUNJMX_START.*',
+      notify => Service[$servicename],
     }
 
     file_line { 'jmxusername':
       path => "${finaldest}/conf/jmx.access",
       line => "${jmxuser} readwrite",
+      notify => Service[$servicename],
     }
 
     file_line { 'jmxpassword':
       path => "${finaldest}/conf/jmx.password",
       line => "${jmxuser} ${jmxpassword}",
+      notify => Service[$servicename],
     }
 
     file { "${finaldest}/conf/jmx.password":
