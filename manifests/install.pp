@@ -59,6 +59,7 @@ class lwactivemq::install (
 
     exec {'/etc/init.d/activemq setup /etc/default/activemq':
       path    => '/bin',
+      user    => 'root',
       creates => '/etc/default/activemq',
       notify  => Service[$servicename]
     } ->
