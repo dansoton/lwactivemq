@@ -16,4 +16,7 @@ class lwactivemq::params {
   $bonecpdest = '/usr/ActiveMQ/lib/optional'
   $mq_security = false
   $usejmx = false
+  $jmxport = '11099'
+  $jmxuser = 'jmxuser' # this is a space holder.  Change to your jmx username.
+  $jmxpassword = 'jmxpassword' # this is a space holder.  Change to your jmx password.
 }

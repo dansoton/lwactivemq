@@ -48,16 +48,10 @@
         <plugins>
           <simpleAuthenticationPlugin anonymousAccessAllowed="true">
             <users>
-              <authenticationUser username="system" password="manager"
-              groups="users,admins"/>
-              <authenticationUser username="user" password="password"
-              groups="users"/>
-              <authenticationUser username="guest" password="password" groups="guests"/>
             </users>
           </simpleAuthenticationPlugin>
         </plugins>
         <%- end -%>
-
 
         <destinationPolicy>
             <policyMap>

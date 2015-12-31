@@ -15,6 +15,9 @@ class lwactivemq::install (
   $mq_db_url_string = $lwactivemq::params::mq_db_url_string,
   $mq_security = $lwactivemq::params::mq_security,
   $usejmx = $lwactivemq::params::usejmx,
+  $jmxport = $lwactivemq::params::jmxport,
+  $jmxuser = $lwactivemq::params::jmxuser,
+  $jmxpassword = $lwactivemq::params::jmxpassword,
 
   ) inherits lwactivemq::params {
 
@@ -35,76 +38,101 @@ class lwactivemq::install (
     } ->
 
     exec { "tar -xvzf $destination/$amq_file":
-      path =>  "/bin",
-      cwd =>  $destination,
+      path    =>  '/bin',
+      cwd     =>  $destination,
       creates => "${destination}/apache-activemq-${amq_version}"
     } ->
 
     exec { "cp -R ${destination}/apache-activemq-${amq_version}/. ${finaldest}":
-      path =>  "/bin",
-      cwd => "/usr",
+      path    =>  '/bin',
+      cwd     => '/usr',
       creates => "${finaldest}/README.txt"
     } ->
 
-    exec {"ln -sf /usr/ActiveMQ/bin/activemq /etc/init.d/":
-      path  => "/bin",
-      creates => "/etc/init.d/activemq",
-      notify => Service[$servicename]
+    exec {'ln -sf /usr/ActiveMQ/bin/activemq /etc/init.d/':
+      path    => '/bin',
+      creates => '/etc/init.d/activemq',
+      notify  => Service[$servicename]
     } ->
 
-    exec {"/etc/init.d/activemq setup /etc/default/activemq":
-      path  => "/bin",
-      creates => "/etc/default/activemq",
-      notify => Service[$servicename]
+    exec {'/etc/init.d/activemq setup /etc/default/activemq':
+      path    => '/bin',
+      creates => '/etc/default/activemq',
+      notify  => Service[$servicename]
     } ->
 
 
-    file {"/usr/ActiveMQ/conf/activemq.xml":
+    file {'/usr/ActiveMQ/conf/activemq.xml':
       ensure  => 'file',
       content => template('lwactivemq/activemq.xml.erb'),
       owner   => $activemquser,
-      notify => Service[$servicename],
+      notify  => Service[$servicename],
   } ->
 
-  case $mq_cluster_conn {
-    'mysql': {
+  if $mq_cluster_conn == 'mysql' {
 
-      exec{ "getjdbcdriver":
+      exec{ 'getjdbcdriver':
         command => "/usr/bin/wget -q ${mysqljdbcsource} -O ${mysqljdbcdest}/${mysqljdbc_file}",
       }
 
-      exec{ "getbonecpdriver":
+      exec{ 'getbonecpdriver':
         command => "/usr/bin/wget -q ${bonecpsource} -O ${bonecpdest}/${bonecp_file}",
       }
 
       file { "${mysqljdbcdest}/${mysqljdbc_file}":
-        ensure  => file,
-        owner   => $activemquser,
+        ensure => file,
+        owner  => $activemquser,
         notify => Service[$servicename],
       }
 
       file { "${bonecpdest}/${bonecp_file}":
-        ensure  => file,
-        owner   => $activemquser,
+        ensure => file,
+        owner  => $activemquser,
         notify => Service[$servicename],
       }
-    }
   } ->
 
     service { $servicename:
-      ensure => 'running',
-      enable  => true,
-      hasstatus => true,
-      hasrestart  => true,
+      ensure     => 'running',
+      enable     => true,
+      hasstatus  => true,
+      hasrestart => true,
     }
 
-
   if $usejmx {
+    file_line { 'runactivemqas':
+    path  => '/etc/default/activemq',
+    line  => "ACTIVEMQ_USER=\"activemq\"",
+    match => '^ACTIVEMQ_USER.*',
+    }
+
     file_line { 'jmxsetup':
     path  => '/etc/default/activemq',
     line  => "ACTIVEMQ_SUNJMX_START=\"-Dcom.sun.management.jmxremote.port=1616 -Dcom.sun.management.jmxremote.password.file=\${ACTIVEMQ_CONF}/jmx.password -Dcom.sun.management.jmxremote.access.file=\${ACTIVEMQ_CONF}/jmx.access -Dcom.sun.management.jmxremote.ssl=false -Dcom.sun.management.jmxremote\"",
     match => '^ACTIVEMQ_SUNJMX_START.*',
     }
+
+    file_line { 'jmxusername':
+      path => "${finaldest}/conf/jmx.access",
+      line => "${jmxuser} readwrite",
+    }
+
+    file_line { 'jmxpassword':
+      path => "${finaldest}/conf/jmx.password",
+      line => "${jmxuser} ${jmxpassword}",
+    }
+
+    file { "${finaldest}/conf/jmx.password":
+      ensure => file,
+      mode   => '0600',
+      notify => Service[$servicename],
+    }
+
+    file { ["${finaldest}/conf/jmx.access", '/etc/default/activemq']:
+      ensure => file,
+      notify => Service[$servicename],
+    }
+
   }
 
   }
