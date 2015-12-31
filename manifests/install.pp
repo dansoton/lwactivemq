@@ -67,7 +67,7 @@ class lwactivemq::install (
       content => template('lwactivemq/activemq.xml.erb'),
       owner   => $activemquser,
       notify  => Service[$servicename],
-  } ->
+  }
 
   if $mq_cluster_conn == 'mysql' {
 
