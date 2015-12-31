@@ -21,6 +21,8 @@ class lwactivemq::install (
 
   ) inherits lwactivemq::params {
 
+    Exec { user => 'activemq'}
+
     $amq_array = split($source, '/')
     $amq_file = $amq_array[-1]
 
@@ -131,12 +133,6 @@ class lwactivemq::install (
       mode   => '0600',
       notify => Service[$servicename],
     }
-
-    file { ["${finaldest}/conf/jmx.access", '/etc/default/activemq']:
-      ensure => file,
-      notify => Service[$servicename],
-    }
-
   }
 
   }
