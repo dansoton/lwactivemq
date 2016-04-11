@@ -103,6 +103,14 @@ class lwactivemq::install (
       hasrestart => true,
     }
 
+  if $mq_security {
+    file_line { 'setconsoleuser':
+      path  => '/usr/ActiveMQ/conf/jetty-realm.properties',
+      line  => "${consoleusername}: ${consolepassword}, ${consoleroles}",
+      notify => Service[$servicename],
+    }
+  }
+
   if $usejmx {
     file_line { 'runactivemqas':
       path  => '/etc/default/activemq',

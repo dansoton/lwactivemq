@@ -19,4 +19,7 @@ class lwactivemq::params {
   $jmxport = '11099'
   $jmxuser = 'jmxuser' # this is a space holder.  Change to your jmx username.
   $jmxpassword = 'jmxpassword' # this is a space holder.  Change to your jmx password.
+  $consoleusername = '' # this is a default username.  Change to your console username.
+  $consolepassword = '' # this is a default username.  Change to your console password.
+  $consoleroles = '' # this is a default role(s).  Change to your console role.
 }
