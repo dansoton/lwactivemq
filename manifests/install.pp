@@ -18,6 +18,9 @@ class lwactivemq::install (
   $jmxport = $lwactivemq::params::jmxport,
   $jmxuser = $lwactivemq::params::jmxuser,
   $jmxpassword = $lwactivemq::params::jmxpassword,
+  $consoleusername = $lwactivemq::params::consoleusername,
+  $consolepassword = $lwactivemq::params::consolepassword,
+  $consoleroles = $lwactivemq::params::consoleroles,
 
   ) inherits lwactivemq::params {
 
