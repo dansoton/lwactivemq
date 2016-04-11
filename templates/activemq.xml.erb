@@ -50,7 +50,7 @@
             <users>
               <authenticationUser username="${activemq.username}" password="${activemq.password}"
             groups="users,admins"/>
-            <authenticationUser username="${consoleusername}" password="${consolepassword}"
+            <authenticationUser username="<%= @consoleusername %>" password="<%= @consolepassword %>"
           groups="users,admins"/>
             </users>
           </simpleAuthenticationPlugin>
