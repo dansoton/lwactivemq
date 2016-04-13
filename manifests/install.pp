@@ -61,14 +61,6 @@ class lwactivemq::install (
       notify  => Service[$servicename]
     } ->
 
-    exec {'/etc/init.d/activemq setup /etc/default/activemq':
-      path    => '/bin',
-      user    => 'root',
-      creates => '/etc/default/activemq',
-      notify  => Service[$servicename]
-    } ->
-
-
     file {'/usr/ActiveMQ/conf/activemq.xml':
       ensure  => 'file',
       content => template('lwactivemq/activemq.xml.erb'),
