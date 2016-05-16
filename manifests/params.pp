@@ -22,4 +22,7 @@ class lwactivemq::params {
   $consoleusername = '' # this is a default username.  Change to your console username.
   $consolepassword = '' # this is a default username.  Change to your console password.
   $consoleroles = '' # this is a default role(s).  Change to your console role.
+  $createqueuestopics = false # this is a default value if you want to create queues or topics on broker startup
+  $amqqueues = ''
+  $amqtopics = ''
 }

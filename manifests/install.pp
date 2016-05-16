@@ -21,7 +21,9 @@ class lwactivemq::install (
   $consoleusername = $lwactivemq::params::consoleusername,
   $consolepassword = $lwactivemq::params::consolepassword,
   $consoleroles = $lwactivemq::params::consoleroles,
-
+  $createqueuestopics = $lwactivemq::params::createqueuestopics,
+  $amqqueues = $lwactivemq::params::amqqueues,
+  $amqtopics = $lwactivemq::params::amqtopics,
   ) inherits lwactivemq::params {
 
     Exec { user => 'activemq'}

@@ -85,6 +85,17 @@
             </policyMap>
         </destinationPolicy>
 
+        <% if @createqueuestopics == true -%>
+          <destinations>
+            <% @amqqueues.each do |val| -%>
+              <queue physicalName="<%= val %>"/>
+            <% end -%>
+            <% @amqtopics.each do |val| -%>
+              <topic physicalName="<%= val %>"/>
+            <% end -%>
+          </destinations>
+        <%- end -%>
+
 
         <!--
             The managementContext is used to configure how ActiveMQ is exposed in
