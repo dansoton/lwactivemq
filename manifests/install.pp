@@ -109,6 +109,12 @@ class lwactivemq::install (
   }
 
   if $usejmx {
+  
+    file { '/etc/default/activemq':
+    ensure    => "file",
+    owner     => $activemquser,
+    }
+    
     file_line { 'runactivemqas':
       path  => '/etc/default/activemq',
       line  => "ACTIVEMQ_USER=\"activemq\"",
