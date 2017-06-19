@@ -1,0 +1,7 @@
+start on startup
+respawn
+script
+  set -a
+  . /etc/default/activemq
+  exec /usr/ActiveMQ/bin/activemq-admin start
+end script
