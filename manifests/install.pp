@@ -56,11 +56,10 @@ class lwactivemq::install (
       creates => "${finaldest}/README.txt"
     } ->
 
-    exec {'ln -sf /usr/ActiveMQ/bin/activemq /etc/init.d/':
-      path    => '/bin',
-      user    => 'root',
-      creates => '/etc/init.d/activemq',
-      notify  => Service[$servicename]
+    file {'/etc/init/activemq.conf':
+      ensure  => 'file',
+      content => template('lwactivemq/activemq.conf.erb'),
+      owner   => $activemquser,
     } ->
 
     file {'/usr/ActiveMQ/conf/activemq.xml':
@@ -98,6 +97,7 @@ class lwactivemq::install (
       enable     => true,
       hasstatus  => true,
       hasrestart => true,
+      provider => 'upstart',
     }
 
   if $mq_security {
@@ -124,7 +124,7 @@ class lwactivemq::install (
 
     file_line { 'jmxsetup':
       path  => '/etc/default/activemq',
-      line  => "ACTIVEMQ_SUNJMX_START=\"-Dcom.sun.management.jmxremote.port=${jmxport} -Dcom.sun.management.jmxremote.rmi.port=${jmxport} -Djava.rmi.server.hostname=$ipaddress -Dcom.sun.management.jmxremote.password.file=\${ACTIVEMQ_CONF}/jmx.password -Dcom.sun.management.jmxremote.access.file=\${ACTIVEMQ_CONF}/jmx.access -Dcom.sun.management.jmxremote.ssl=false -Dcom.sun.management.jmxremote\"",
+      line  => "ACTIVEMQ_SUNJMX_START=\"-Dcom.sun.management.jmxremote.port=${jmxport} -Dcom.sun.management.jmxremote.rmi.port=${jmxport} -Djava.rmi.server.hostname=$ipaddress -Dcom.sun.management.jmxremote.password.file=/usr/ActiveMQ/conf/jmx.password -Dcom.sun.management.jmxremote.access.file=/usr/ActiveMQ/conf/jmx.access -Dcom.sun.management.jmxremote.ssl=false -Dcom.sun.management.jmxremote\"",
       match => '^ACTIVEMQ_SUNJMX_START.*',
       notify => Service[$servicename],
     }
