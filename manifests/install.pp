@@ -124,8 +124,8 @@ class lwactivemq::install (
 
     file_line { 'jmxsetup':
       path  => '/etc/default/activemq',
-      line  => "ACTIVEMQ_SUNJMX_START=\"-Dcom.sun.management.jmxremote.port=${jmxport} -Dcom.sun.management.jmxremote.rmi.port=${jmxport} -Djava.rmi.server.hostname=$ipaddress -Dcom.sun.management.jmxremote.password.file=/usr/ActiveMQ/conf/jmx.password -Dcom.sun.management.jmxremote.access.file=/usr/ActiveMQ/conf/jmx.access -Dcom.sun.management.jmxremote.ssl=false -Dcom.sun.management.jmxremote\"",
-      match => '^ACTIVEMQ_SUNJMX_START.*',
+      line  => "SUNJMX=\"-Dcom.sun.management.jmxremote.port=${jmxport} -Dcom.sun.management.jmxremote.rmi.port=${jmxport} -Djava.rmi.server.hostname=$ipaddress -Dcom.sun.management.jmxremote.password.file=/usr/ActiveMQ/conf/jmx.password -Dcom.sun.management.jmxremote.access.file=/usr/ActiveMQ/conf/jmx.access -Dcom.sun.management.jmxremote.ssl=false -Dcom.sun.management.jmxremote\"",
+      match => '^SUNJMX.*',
       notify => Service[$servicename],
     }
 
