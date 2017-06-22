@@ -71,7 +71,7 @@ class lwactivemq::install (
 
     file_line { 'activemqopts':
       path  => '/etc/default/activemq',
-      line  => "ACTIVEMQ_OPTS=\"-Xms${min_heap} -Xmx${max_heap} -Dorg.apache.activemq.UseDedicatedTaskRunner=true -Djava.util.logging.config.file=logging.properties -Djava.security.auth.login.config=\${ACTIVEMQ_CONF}/login.config\"",
+      line  => "ACTIVEMQ_OPTS=\"-Xms${min_heap} -Xmx${max_heap} -Dorg.apache.activemq.UseDedicatedTaskRunner=true -Djava.util.logging.config.file=logging.properties -Djava.security.auth.login.config=/usr/ActiveMQ/conf/login.config\"",
       match => '^ACTIVEMQ_OPTS.*',
       notify => Service[$servicename],
     } ->
@@ -133,7 +133,7 @@ class lwactivemq::install (
 
     file_line { 'jmxsetup':
       path  => '/etc/default/activemq',
-      line  => "SUNJMX=\"-Dcom.sun.management.jmxremote.port=${jmxport} -Dcom.sun.management.jmxremote.rmi.port=${jmxport} -Djava.rmi.server.hostname=$ipaddress -Dcom.sun.management.jmxremote.password.file=\${ACTIVEMQ_CONF}/jmx.password -Dcom.sun.management.jmxremote.access.file=\${ACTIVEMQ_CONF}/jmx.access -Dcom.sun.management.jmxremote.ssl=false -Dcom.sun.management.jmxremote\"",
+      line  => "SUNJMX=\"-Dcom.sun.management.jmxremote.port=${jmxport} -Dcom.sun.management.jmxremote.rmi.port=${jmxport} -Djava.rmi.server.hostname=$ipaddress -Dcom.sun.management.jmxremote.password.file=/usr/ActiveMQ/conf/jmx.password -Dcom.sun.management.jmxremote.access.file=/usr/ActiveMQ/conf/jmx.access -Dcom.sun.management.jmxremote.ssl=false -Dcom.sun.management.jmxremote\"",
       match => '^SUNJMX.*',
       notify => Service[$servicename],
     }
