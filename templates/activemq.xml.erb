@@ -123,7 +123,7 @@
 
         <% if @mq_cluster_type == "nocluster" -%>
         <persistenceAdapter>
-             <kahaDB directory="${activemq.data}/kahadb"/>
+             <kahaDB directory="/var/activemq/kahadb"/>
         </persistenceAdapter>
         <%- end -%>
 
