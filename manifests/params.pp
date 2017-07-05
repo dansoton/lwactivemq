@@ -7,7 +7,7 @@ class lwactivemq::params {
   $destination = '/opt/activemqinstall'
   $finaldest = '/usr/ActiveMQ'
   $servicename = 'activemq'
-  $max_heap = '3072m'
+  $max_heap = '7516m'
   $min_heap = '3072m'
   $mq_cluster_type = 'activepassive' #activepassive or nocluster
   $mq_cluster_conn = 'mysql' # mysql and there will be others as this matures
